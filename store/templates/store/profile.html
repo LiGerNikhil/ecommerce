@@ -1,0 +1,139 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mx-auto px-4 py-12">
+  <div class="flex flex-col md:flex-row gap-8">
+    <div class="bg-white shadow-xl rounded-xl p-8 w-full md:w-1/2 border border-gray-200">
+      <h2 class="text-3xl font-extrabold text-gray-800 mb-6">Your Profile</h2>
+
+      <div class="space-y-4 mb-8 text-gray-600">
+        <p>
+          <span class="font-semibold text-gray-800">Username:</span>
+          <span class="ml-2">{{ user.username }}</span>
+        </p>
+        <p>
+          <span class="font-semibold text-gray-800">Email:</span>
+          <span class="ml-2">{{ user.email }}</span>
+        </p>
+      </div>
+
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <div class="mb-2">
+          <label class="block font-semibold text-gray-800 mb-1">Address:</label>
+          <input
+            type="text"
+            name="address"
+            value="{{ form.address.value|default:'' }}"
+            class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300"
+            placeholder="Enter your address"
+          />
+        </div>
+        <div class="mb-2">
+          <label class="block font-semibold text-gray-800 mb-1">Phone:</label>
+          <input
+            type="text"
+            name="phone"
+            value="{{ form.phone.value|default:'' }}"
+            class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300"
+            placeholder="Enter your phone number"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          Update Profile
+        </button>
+      </form>
+
+      <div class="flex flex-col md:flex-row gap-4 mt-6">
+        <a
+          href="{% url 'order_history' %}"
+          class="text-blue-600 hover:underline font-semibold"
+        >
+          View Order History
+        </a>
+        <a href="{% url 'cart' %}" class="text-green-600 hover:underline font-semibold">
+          View Cart
+        </a>
+      </div>
+    </div>
+
+    <div class="bg-white shadow-xl rounded-xl p-8 w-full md:w-1/2 border border-gray-200">
+      <h2 class="text-3xl font-extrabold text-gray-800 mb-6">Your Cart</h2>
+      
+      <form method="post" action="{% url 'cart' %}">
+        {% csrf_token %}
+        <div class="overflow-x-auto">
+          <table class="w-full text-left whitespace-nowrap">
+            <thead>
+              <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                <th class="py-3 px-6">Product</th>
+                <th class="py-3 px-6">Price</th>
+                <th class="py-3 px-6">Quantity</th>
+                <th class="py-3 px-6">Total</th>
+                <th class="py-3 px-6">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+              {% for item in cart_items %}
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200">
+                <td class="py-3 px-6">{{ item.product.name }}</td>
+                <td class="py-3 px-6">${{ item.product.price|floatformat:2 }}</td>
+                <td class="py-3 px-6">
+                  <input
+                    type="number"
+                    name="quantity_{{ item.id }}"
+                    value="{{ item.quantity }}"
+                    min="1"
+                    class="w-16 border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </td>
+                <td class="py-3 px-6 font-bold text-gray-800">
+                  ${{ item.product.price|floatformat:2|add:item.quantity|floatformat:2 }}
+                </td>
+                <td class="py-3 px-6">
+                  <a
+                    href="{% url 'remove_from_cart' item.id %}"
+                    class="text-red-600 hover:text-red-800 font-medium transition-colors duration-200"
+                  >
+                    Remove
+                  </a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5" class="py-4 text-center text-gray-500">
+                  Your cart is empty.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        
+        {% if cart_items %}
+        <div class="mt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="flex flex-col md:flex-row gap-4">
+            <button
+              type="submit"
+              class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Update Cart
+            </button>
+            <a
+              href="{% url 'checkout' %}"
+              class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300 text-center"
+            >
+              Proceed to Checkout
+            </a>
+          </div>
+          <div class="text-2xl font-bold text-gray-800">
+            Total: ${{ cart_total|floatformat:2 }}
+          </div>
+        </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

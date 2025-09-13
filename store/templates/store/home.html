@@ -1,0 +1,93 @@
+{% extends 'base.html' %} 
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+  <div class="flex flex-col items-center justify-center">
+
+    {% if dashboard %}
+    <h2 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-12">
+      Welcome back, <span class="text-blue-600">{{ user.username }}</span>!
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
+
+      <div class="bg-white shadow-xl rounded-xl p-8 flex flex-col items-center justify-center text-center transition-transform transform hover:scale-105 duration-300 border border-gray-200">
+        <span class="text-5xl mb-4">🛒</span>
+        <div class="text-xl font-semibold text-gray-700">Cart Items</div>
+        <div class="text-4xl text-green-600 font-bold my-2">
+          {{ cart_items|length }}
+        </div>
+        <div class="text-gray-500 mt-1">
+          Total: ${{ cart_total|floatformat:2 }}
+        </div>
+        <a
+          href="{% url 'cart' %}"
+          class="mt-6 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300"
+        >
+          View Cart
+        </a>
+      </div>
+
+      <div class="bg-white shadow-xl rounded-xl p-8 flex flex-col items-center justify-center text-center transition-transform transform hover:scale-105 duration-300 border border-gray-200">
+        <span class="text-5xl mb-4">📦</span>
+        <div class="text-xl font-semibold text-gray-700">Orders</div>
+        <div class="text-4xl text-blue-600 font-bold my-2">{{ order_count }}</div>
+        <a
+          href="{% url 'order_history' %}"
+          class="mt-6 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300"
+        >
+          Order History
+        </a>
+      </div>
+
+      <div class="bg-white shadow-xl rounded-xl p-8 flex flex-col items-center justify-center text-center transition-transform transform hover:scale-105 duration-300 border border-gray-200">
+        <span class="text-5xl mb-4">🛍️</span>
+        <div class="text-xl font-semibold text-gray-700">Shop Products</div>
+        <div class="mt-10"></div>
+        <a
+          href="{% url 'product_list' %}"
+          class="mt-6 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300"
+        >
+          Browse Products
+        </a>
+      </div>
+      
+    </div>
+    
+    <div class="mt-12 text-center w-full max-w-5xl">
+      <a 
+        href="{% url 'profile' %}" 
+        class="text-blue-600 hover:text-blue-800 hover:underline text-lg font-medium transition-colors duration-300"
+      >
+        Go to Profile &rarr;
+      </a>
+    </div>
+
+    {% else %}
+    <h2 class="text-5xl md:text-6xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
+      Welcome to the <br class="hidden md:block">
+      <span class="text-blue-600">ShopX</span>
+    </h2>
+    <p class="text-lg text-gray-600 mb-8 text-center max-w-2xl">
+      Discover our curated selection of products. To get started, please log in or create an account.
+    </p>
+
+    <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
+      <a
+        href="{% url 'login' %}"
+        class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300 text-center"
+      >
+        Login
+      </a>
+      <a
+        href="{% url 'register' %}"
+        class="px-8 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300 text-center"
+      >
+        Register
+      </a>
+    </div>
+    {% endif %}
+    
+  </div>
+</div>
+{% endblock %}
