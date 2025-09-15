@@ -90,9 +90,11 @@ def checkout_review_view(request):
 def order_success_view(request, order_id):
 	order = get_object_or_404(Order, pk=order_id, user=request.user)
 	return render(request, 'store/order_success.html', {'order': order})
+
 from django.db.models import Q
 from django import forms
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 # Cart views
 
@@ -179,17 +181,22 @@ def product_detail_view(request, pk):
 def product_list_view(request):
 	query = request.GET.get('q', '')
 	category_id = request.GET.get('category', '')
-	products = Product.objects.all()
+	products = Product.objects.all().order_by('-id')
 	categories = Category.objects.all()
 	if query:
 		products = products.filter(Q(name__icontains=query) | Q(description__icontains=query))
 	if category_id:
 		products = products.filter(category_id=category_id)
+	paginator = Paginator(products, 7)
+	page_number = request.GET.get('page')
+	page_obj = paginator.get_page(page_number)
 	return render(request, 'store/product_list.html', {
-		'products': products,
+		'products': page_obj.object_list,
 		'categories': categories,
 		'selected_category': category_id,
 		'search_query': query,
+		'page_obj': page_obj,
+		'paginator': paginator,
 	})
 from django import forms
 from django.contrib import messages

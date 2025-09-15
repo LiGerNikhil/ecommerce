@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from django.conf import settings
+from django.conf.urls.static import static
 from store.views import home_view
 from store.admin_dashboard import admin_dashboard
 from store.admin_dashboard_views import admin_update_order_status
@@ -28,3 +29,7 @@ urlpatterns = [
     path('', home_view, name='home'),
     path('store/', include('store.urls')),
 ]
+
+# Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,95 +1,135 @@
 {% extends 'base.html' %} 
+{% load static %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-12">
-  <div class="bg-white shadow-xl rounded-xl p-8 border border-gray-200">
-    <h2 class="text-3xl font-extrabold text-gray-800 mb-8">Your Cart</h2>
-
-    <form method="post">
-      {% csrf_token %}
-      <div class="overflow-x-auto">
-        <table class="w-full text-left whitespace-nowrap table-fixed">
-          <thead>
-            <tr
-              class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal"
-            >
-              <th class="py-3 px-6 w-1/4">Product</th>
-              <th class="py-3 px-6 w-1/6">Price</th>
-              <th class="py-3 px-6 w-1/6">Quantity</th>
-              <th class="py-3 px-6 w-1/6">Total</th>
-              <th class="py-3 px-6 w-1/6">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="text-gray-600 text-sm font-light">
-            {% for item in items %}
-            <tr
-              class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200"
-            >
-              <td class="py-3 px-6 font-semibold">
-                {{ item.product.name }}
-              </td>
-              <td class="py-3 px-6">${{ item.product.price|floatformat:2 }}</td>
-              <td class="py-3 px-6">
-                <input
-                  type="number"
-                  name="quantity_{{ item.id }}"
-                  value="{{ item.quantity }}"
-                  min="1"
-                  class="w-16 border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </td>
-              <td class="py-3 px-6 font-bold text-gray-800">
-                ${{ item.get_total|floatformat:2 }}
-              </td>
-              <td class="py-3 px-6">
-                <a
-                  href="{% url 'remove_from_cart' item.id %}"
-                  class="bg-red-500 text-white font-medium py-1 px-3 rounded-md hover:bg-red-600 transition-colors duration-300"
-                >
-                  Remove
-                </a>
-              </td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="5" class="py-8 text-center text-gray-500">
-                Your cart is empty.
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-
-      {% if items %}
-      <div
-        class="mt-6 flex flex-col md:flex-row justify-between items-center gap-4"
-      >
-        <div class="flex flex-col md:flex-row gap-4">
-          <button
-            type="submit"
-            class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Update Cart
-          </button>
-          <a
-            href="{% url 'checkout' %}"
-            class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300 text-center"
-          >
-            Proceed to Checkout
-          </a>
-        </div>
-        <div class="text-2xl font-bold text-gray-800">
-          Total: ${{ total|floatformat:2 }}
-        </div>
-      </div>
-      {% endif %}
-    </form>
+<style>
+  /* Custom styles for the responsive cart layout (no images) */
+  @media (max-width: 767px) { /* Tailwind's 'md' breakpoint */
+    .responsive-cart-table thead {
+      display: none; /* Hide table headers on mobile */
+    }
+    .responsive-cart-table tr {
+      display: block;
+      margin-bottom: 1.5rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .responsive-cart-table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f3f4f6;
+      text-align: right;
+    }
+    .responsive-cart-table td:last-child {
+      border-bottom: none;
+    }
     
-    <div class="mt-8">
-      <a href="{% url 'product_list' %}" class="inline-block text-blue-600 hover:underline font-semibold" >
-        &larr; Continue Shopping
-      </a>
+    /* Style the first cell (product name) as the card header */
+    .responsive-cart-table tr td:first-child {
+      display: block;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #111827;
+      text-align: left;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    /* Add labels for other cells */
+    .responsive-cart-table td[data-label]::before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: #374151;
+      margin-right: 1rem;
+      text-align: left;
+    }
+    
+    /* Hide the label for the product name cell */
+    .responsive-cart-table tr td:first-child::before {
+      display: none;
+    }
+  }
+</style>
+
+<div class="bg-gray-50 min-h-screen py-12">
+  <div class="container mx-auto px-4">
+    <div class="bg-white shadow-2xl rounded-2xl p-6 sm:p-8 border border-gray-200">
+      
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-4 sm:mb-0">Your Shopping Cart</h1>
+        <a href="{% url 'product_list' %}" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          Continue Shopping
+        </a>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        {% if items %}
+          <div class="overflow-x-auto">
+            <table class="w-full text-left responsive-cart-table">
+              <thead>
+                <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                  <th class="py-3 px-6 w-2/5 rounded-l-lg">Product</th>
+                  <th class="py-3 px-6 w-1/5">Price</th>
+                  <th class="py-3 px-6 w-1/5 text-center">Quantity</th>
+                  <th class="py-3 px-6 w-1/5">Total</th>
+                  <th class="py-3 px-6 w-auto text-center rounded-r-lg">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="text-gray-700 text-md">
+                {% for item in items %}
+                <tr class="md:border-b md:border-gray-200 md:hover:bg-gray-50">
+                  <td data-label="Product">{{ item.product.name }}</td>
+                  <td data-label="Price">${{ item.product.price|floatformat:2 }}</td>
+                  <td data-label="Quantity">
+                    <input type="number" name="quantity_{{ item.id }}" value="{{ item.quantity }}" min="1" class="w-20 border border-gray-300 rounded-lg px-2 py-1 text-center focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  </td>
+                  <td data-label="Total" class="font-bold text-gray-800">${{ item.get_total|floatformat:2 }}</td>
+                  <td data-label="Actions" class="text-center">
+                    <a href="{% url 'remove_from_cart' item.id %}" class="bg-red-100 text-red-600 font-semibold py-2 px-4 rounded-lg hover:bg-red-200 transition-colors duration-300">
+                      Remove
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-gray-200">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+              <div class="w-full md:w-auto flex flex-col md:flex-row gap-4">
+                <button type="submit" class="w-full text-center bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">
+                  Update Cart
+                </button>
+              </div>
+              <div class="w-full md:w-auto text-right mt-6 md:mt-0">
+                <p class="text-gray-600 text-lg">Grand Total</p>
+                <p class="text-4xl font-extrabold text-gray-900">${{ total|floatformat:2 }}</p>
+                <a href="{% url 'checkout' %}" class="w-full mt-4 text-center bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 inline-block">
+                  Proceed to Checkout
+                </a>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="text-center py-16">
+            <svg class="mx-auto h-24 w-24 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <h3 class="mt-4 text-2xl font-semibold text-gray-800">Your cart is empty</h3>
+            <p class="mt-2 text-gray-500">Looks like you haven't added anything to your cart yet.</p>
+            <div class="mt-6">
+              <a href="{% url 'product_list' %}" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">
+                Start Shopping
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      </form>
     </div>
   </div>
 </div>

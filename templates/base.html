@@ -1,100 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}Ecommerce Site{% endblock %}</title>
+    <title>{% block title %}Papazon - Your One-Stop Shop{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      /* Optional: Add a custom font for a more professional look */
-      /* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'); */
-      /* body { font-family: 'Inter', sans-serif; } */
+      /* Smooth transitions for a better user experience */
+      .transition-all {
+        transition: all 0.3s ease-in-out;
+      }
+      /* Ensure the mobile menu has a high z-index */
+      #mobile-menu {
+        z-index: 40;
+      }
     </style>
-  </head>
-  <body class="bg-gray-100 min-h-screen flex flex-col">
-    <header class="bg-white shadow-md sticky top-0 z-50">
-      <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- =================================================================== -->
+  <!-- RESPONSIVE HEADER                                                 -->
+  <!-- =================================================================== -->
+ <header class="bg-white shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+      
+      <!-- Logo -->
+      <div class="flex-shrink-0">
         <a href="/" class="flex items-center space-x-3">
-          <img
-            src="https://via.placeholder.com/40"
-            alt="Ecommerce Logo"
-            class="h-8 w-8 rounded-full"
-          />
-          <span class="text-2xl font-bold text-gray-800">ShopX</span>
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-FpHAZe8cjdA7gyzNzElM5V6JjXCW5NLWHw&s" alt="Papazon Logo" class="h-12 w-auto rounded-full"/>
+          <span class="text-2xl font-bold text-gray-800">Papazon</span>
         </a>
+      </div>
 
-        <nav class="flex items-center space-x-6">
-          {% if user.is_authenticated %}
-          <a
-            href="/store/products/"
-            class="text-gray-600 hover:text-blue-600 font-medium transition duration-300"
-          >
-            Products
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center space-x-8">
+        {% if user.is_authenticated %}
+          <!-- Products link is now only visible to authenticated users -->
+          <a href="{% url 'product_list' %}" class="text-gray-600 hover:text-blue-600 font-medium transition-all">Products</a>
+          <a href="{% url 'profile' %}" class="text-gray-600 hover:text-blue-600 font-medium transition-all">Profile</a>
+          <a href="{% url 'order_history' %}" class="text-gray-600 hover:text-blue-600 font-medium transition-all">My Orders</a>
+          <a href="{% url 'cart' %}" class="text-gray-600 hover:text-blue-600 relative">
+            <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
           </a>
-          <a
-            href="/store/profile/"
-            class="text-gray-600 hover:text-blue-600 font-medium transition duration-300"
-          >
-            Profile
-          </a>
-
-          <a
-            href="{% url 'cart' %}"
-            class="text-gray-600 hover:text-blue-600 transition duration-300 relative"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5H19l-4 8H7M7 13a2 2 0 100 4m0-4a2 2 0 110-4m10 4a2 2 0 100 4m0-4a2 2 0 110-4"
-              />
-            </svg>
-            </a>
-
-          <form action="/store/logout/" method="post" class="inline">
+          <form action="{% url 'logout' %}" method="post" class="inline">
             {% csrf_token %}
-            <button
-              type="submit"
-              class="bg-red-500 text-white font-medium py-2 px-4 rounded-md hover:bg-red-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-            >
-              Logout
-            </button>
+            <button type="submit" class="bg-red-500 text-white font-medium py-2 px-4 rounded-md hover:bg-red-600 transition-all">Logout</button>
           </form>
-          {% else %}
-          <a
-            href="/store/login/"
-            class="text-gray-600 hover:text-blue-600 font-medium transition duration-300"
-          >
-            Login
-          </a>
-          <a
-            href="/store/register/"
-            class="bg-blue-500 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Register
-          </a>
-          {% endif %}
-        </nav>
-      </div>
-    </header>
+        {% else %}
+          <!-- Links for logged-out users -->
+          <a href="{% url 'login' %}" class="text-gray-600 hover:text-blue-600 font-medium transition-all">Login</a>
+          <a href="{% url 'register' %}" class="bg-blue-500 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-600 transition-all">Register</a>
+        {% endif %}
+      </nav>
 
-    <main class="container mx-auto px-4 py-8 flex-grow">
-      {% block content %}{% endblock %}
-    </main>
-
-    <footer class="bg-gray-800 text-white mt-auto">
-      <div class="container mx-auto px-4 py-6 text-center">
-        <p class="text-sm">
-          &copy; 2025 ShopX. All rights reserved.
-        </p>
+      <!-- Mobile Menu Button (Hamburger) -->
+      <div class="md:hidden">
+        <button id="mobile-menu-button" class="text-gray-600 hover:text-blue-600 focus:outline-none">
+          <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+          </svg>
+        </button>
       </div>
-    </footer>
-  </body>
+
+    </div>
+  </div>
+
+  <!-- Mobile Menu (Hidden by default) -->
+  <div id="mobile-menu" class="hidden md:hidden absolute top-0 inset-x-0 p-2 transition transform origin-top-right">
+    <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-white divide-y-2 divide-gray-50">
+      <div class="pt-5 pb-6 px-5">
+        <div class="flex items-center justify-between">
+          <a href="/" class="flex items-center space-x-3">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-FpHAZe8cjdA7gyzNzElM5V6JjXCW5NLWHw&s" alt="Papazon Logo" class="h-10 w-auto rounded-full"/>
+            <span class="text-xl font-bold text-gray-800">Papazon</span>
+          </a>
+          <button id="mobile-menu-close" class="text-gray-500 hover:text-gray-800">
+            <svg class="h-7 w-7" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+        <div class="mt-6">
+          <nav class="grid gap-y-8">
+            {% if user.is_authenticated %}
+              <!-- Products link is now visible in the mobile menu for logged-in users -->
+              <a href="{% url 'product_list' %}" class="flex items-center p-3 -m-3 text-base font-medium text-gray-900 rounded-md hover:bg-gray-50">Products</a>
+              <a href="{% url 'profile' %}" class="flex items-center p-3 -m-3 text-base font-medium text-gray-900 rounded-md hover:bg-gray-50">Profile</a>
+              <a href="{% url 'order_history' %}" class="flex items-center p-3 -m-3 text-base font-medium text-gray-900 rounded-md hover:bg-gray-50">My Orders</a>
+              <a href="{% url 'cart' %}" class="flex items-center p-3 -m-3 text-base font-medium text-gray-900 rounded-md hover:bg-gray-50">Cart</a>
+            {% endif %}
+          </nav>
+        </div>
+      </div>
+      <div class="py-6 px-5 space-y-6">
+        {% if user.is_authenticated %}
+          <form action="{% url 'logout' %}" method="post" class="w-full">
+            {% csrf_token %}
+            <button type="submit" class="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-red-600 hover:bg-red-700">Logout</button>
+          </form>
+        {% else %}
+          <a href="{% url 'register' %}" class="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700">Register</a>
+          <p class="mt-6 text-center text-base font-medium text-gray-500">
+            Existing customer? <a href="{% url 'login' %}" class="text-blue-600 hover:text-blue-500">Login</a>
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</header>
+
+  <!-- =================================================================== -->
+  <!-- MAIN CONTENT BLOCK                                                -->
+  <!-- =================================================================== -->
+  <main class="flex-grow w-full">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- RESPONSIVE FOOTER                                                 -->
+  <!-- =================================================================== -->
+  <footer class="bg-gray-800 text-white w-full">
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="col-span-2 md:col-span-1">
+          <h3 class="font-bold text-2xl mb-4">Papazon</h3>
+          <p class="text-gray-400">Your one-stop shop for everything you need. Quality and style delivered.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold text-lg mb-4">Shop</h4>
+          <ul class="space-y-2">
+            <li><a href="{% url 'category_products' category_id=1 %}" class="text-gray-400 hover:text-white">Electronics</a></li>
+            <li><a href="{% url 'category_products' category_id=2 %}" class="text-gray-400 hover:text-white">Fashion</a></li>
+            <li><a href="{% url 'category_products' category_id=3 %}" class="text-gray-400 hover:text-white">Home Goods</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-lg mb-4">Support</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">FAQs</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Shipping & Returns</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-lg mb-4">Follow Us</h4>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.05 7.54a4.47 4.47 0 0 0-3.3-1.46H5.25a4.47 4.47 0 0 0-3.3 1.46c-.95 1.12-1.25 2.5-1.02 3.9.23 1.4.98 2.6 2.02 3.4.29.22.62.38.97.48.35.1.7.15 1.05.15h11.4c.35 0 .7-.05 1.05-.15.35-.1.68-.26.97-.48 1.04-.8 1.79-2 2.02-3.4.23-1.4-.07-2.78-1.02-3.9zM12 15.4c-1.88 0-3.4-1.52-3.4-3.4s1.52-3.4 3.4-3.4 3.4 1.52 3.4 3.4-1.52 3.4-3.4 3.4z"></path></svg></a>
+            <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 border-t border-gray-700 pt-8 text-center">
+        <p class="text-base text-gray-400">&copy; {% now "Y" %} Papazon. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript for Mobile Menu -->
+  <script>
+    const menuButton = document.getElementById('mobile-menu-button');
+    const closeButton = document.getElementById('mobile-menu-close');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuButton.addEventListener('click', () => {
+      mobileMenu.classList.remove('hidden');
+    });
+
+    closeButton.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+    });
+  </script>
+
+</body>
 </html>

@@ -25,7 +25,7 @@ def create_mock_data(apps, schema_editor):
             'price': 999.99,
             'category': category_objs['Electronics'],
             'stock': 25,
-            'image': 'https://m.media-amazon.com/images/I/81Os1SDWpcL._UF1000,1000_QL80_.jpg'
+            'image': 'products/iphone15pro.jpeg'
         },
         {
             'name': 'Samsung Galaxy S24 Ultra',

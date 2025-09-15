@@ -1,93 +1,249 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-12">
-  <div class="flex flex-col items-center justify-center">
+<div class="bg-gray-100">
 
-    {% if dashboard %}
-    <h2 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-12">
-      Welcome back, <span class="text-blue-600">{{ user.username }}</span>!
-    </h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
-
-      <div class="bg-white shadow-xl rounded-xl p-8 flex flex-col items-center justify-center text-center transition-transform transform hover:scale-105 duration-300 border border-gray-200">
-        <span class="text-5xl mb-4">🛒</span>
-        <div class="text-xl font-semibold text-gray-700">Cart Items</div>
-        <div class="text-4xl text-green-600 font-bold my-2">
-          {{ cart_items|length }}
-        </div>
-        <div class="text-gray-500 mt-1">
-          Total: ${{ cart_total|floatformat:2 }}
-        </div>
-        <a
-          href="{% url 'cart' %}"
-          class="mt-6 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300"
-        >
-          View Cart
-        </a>
+  <!-- =================================================================== -->
+  <!-- HERO SECTION (Inspired by Amazon's Hero Carousel)                   -->
+  <!-- =================================================================== -->
+  <div class="relative bg-gray-900 text-white overflow-hidden">
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0">
+      <img src="https://img.freepik.com/free-photo/excited-girl-open-up-shopping-bags-gasping-amazed-checking-out-gifts-her-with-happy-face-standing-against-pink-background_1258-300635.jpg?semt=ais_hybrid&w=740&q=80" 
+           alt="Papazon Deals" 
+           class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-black opacity-50"></div>
+    </div>
+    
+    <!-- Hero Content -->
+    <div class="relative container mx-auto px-6 py-24 md:py-32 lg:py-40 text-center">
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight mb-4">
+        Welcome to <span class="text-blue-400">Papazon</span>
+      </h1>
+      <p class="text-lg md:text-2xl text-gray-200 max-w-3xl mx-auto mb-10">
+        Your destination for top deals, curated collections, and unbeatable prices.
+      </p>
+      
+      <!-- Conditional Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+        {% if user.is_authenticated %}
+          <a href="{% url 'product_list' %}" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 text-lg transform hover:scale-105">
+            Start Shopping
+          </a>
+          <a href="{% url 'profile' %}" class="px-8 py-3 bg-gray-700 text-white font-bold rounded-full shadow-lg hover:bg-gray-600 transition-all duration-300 text-lg transform hover:scale-105">
+            My Account
+          </a>
+        {% else %}
+          <a href="{% url 'login' %}" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 text-lg transform hover:scale-105">
+            Login
+          </a>
+          <a href="{% url 'register' %}" class="px-8 py-3 bg-green-500 text-white font-bold rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 text-lg transform hover:scale-105">
+            Create Account
+          </a>
+        {% endif %}
       </div>
+    </div>
+  </div>
 
-      <div class="bg-white shadow-xl rounded-xl p-8 flex flex-col items-center justify-center text-center transition-transform transform hover:scale-105 duration-300 border border-gray-200">
-        <span class="text-5xl mb-4">📦</span>
-        <div class="text-xl font-semibold text-gray-700">Orders</div>
-        <div class="text-4xl text-blue-600 font-bold my-2">{{ order_count }}</div>
-        <a
-          href="{% url 'order_history' %}"
-          class="mt-6 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300"
-        >
-          Order History
-        </a>
+  <!-- =================================================================== -->
+  <!-- FEATURED DEALS & CATEGORIES (Grid layout from Amazon)               -->
+  <!-- =================================================================== -->
+  <div class="py-12 bg-gray-100">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <!-- Card 1: Revamp your home -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+          <div class="p-5">
+            <h3 class="text-xl font-bold text-gray-800">Revamp your home in style</h3>
+          </div>
+          <div class="grid grid-cols-2 gap-4 px-5 flex-grow">
+            <!-- These links are now conditional -->
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="hover:opacity-90">
+              <img src="https://images-eu.ssl-images-amazon.com/images/G/31/IMG20/Home/2024/Gateway/BTFGW/PCQC/New/1x/final/186x116_Home_furnishings_2._SY116_CB555624324_.jpg" class="w-full h-auto object-cover rounded" alt="Cushion covers">
+              <p class="text-xs mt-1 text-gray-600">Cushion covers, bedsheets & more</p>
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="hover:opacity-90">
+              <img src="https://images-eu.ssl-images-amazon.com/images/G/31/IMG20/Home/2024/Gateway/BTFGW/PCQC/New/1x/final/186x116_Home_decor_1._SY116_CB555624324_.jpg" class="w-full h-auto object-cover rounded" alt="Figurines">
+              <p class="text-xs mt-1 text-gray-600">Figurines, vases & more</p>
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="hover:opacity-90">
+              <img src="https://images-eu.ssl-images-amazon.com/images/G/31/IMG20/Home/2024/Gateway/BTFGW/PCQC/New/1x/final/186x116_Home_storage_1._SY116_CB555624324_.jpg" class="w-full h-auto object-cover rounded" alt="Home storage">
+              <p class="text-xs mt-1 text-gray-600">Home storage</p>
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="hover:opacity-90">
+              <img src="https://images-eu.ssl-images-amazon.com/images/G/31/IMG20/Home/2024/Gateway/BTFGW/PCQC/New/1x/final/186x116_Home_lighting_2._SY116_CB555624324_.jpg" class="w-full h-auto object-cover rounded" alt="Lighting">
+              <p class="text-xs mt-1 text-gray-600">Lighting solutions</p>
+            </a>
+          </div>
+          <div class="p-5 mt-auto">
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="text-sm font-semibold text-blue-600 hover:underline">Explore all</a>
+          </div>
+        </div>
+
+        <!-- Card 2: Appliances -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+          <div class="p-5">
+            <h3 class="text-xl font-bold text-gray-800">Appliances for your home | Up to 55% off</h3>
+          </div>
+          <div class="grid grid-cols-2 gap-4 px-5 flex-grow">
+            <!-- These links are now conditional -->
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="hover:opacity-90">
+              <img src="https://images-eu.ssl-images-amazon.com/images/G/31/IMG15/Irfan/GATEWAY/MSO/Appliances-QC-PC-186x116--B08RDL6H79._SY116_CB667322346_.jpg" class="w-full h-auto object-cover rounded" alt="Air conditioners">
+              <p class="text-xs mt-1 text-gray-600">Air conditioners</p>
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="hover:opacity-90">
+              <img src="https://images-eu.ssl-images-amazon.com/images/G/31/IMG15/Irfan/GATEWAY/MSO/Appliances-QC-PC-186x116--B08345R1ZW._SY116_CB667322346_.jpg" class="w-full h-auto object-cover rounded" alt="Refrigerators">
+              <p class="text-xs mt-1 text-gray-600">Refrigerators</p>
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="hover:opacity-90">
+              <img src="https://images-eu.ssl-images-amazon.com/images/G/31/IMG15/Irfan/GATEWAY/MSO/Appliances-QC-PC-186x116--B07G5J5FYP._SY116_CB667322346_.jpg" class="w-full h-auto object-cover rounded" alt="Microwaves">
+              <p class="text-xs mt-1 text-gray-600">Microwaves</p>
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="hover:opacity-90">
+              <img src="https://images-eu.ssl-images-amazon.com/images/G/31/IMG15/Irfan/GATEWAY/MSO/186x116---wm._SY116_CB667322346_.jpg" class="w-full h-auto object-cover rounded" alt="Washing machines">
+              <p class="text-xs mt-1 text-gray-600">Washing machines</p>
+            </a>
+          </div>
+          <div class="p-5 mt-auto">
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="text-sm font-semibold text-blue-600 hover:underline">See more</a>
+          </div>
+        </div>
+
+        <!-- Card 3: Headphones -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+          <div class="p-5">
+            <h3 class="text-xl font-bold text-gray-800">Starting ₹149 | Headphones</h3>
+          </div>
+          <div class="grid grid-cols-2 gap-4 px-5 flex-grow">
+            <!-- These links are now conditional -->
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="hover:opacity-90">
+              <img src="https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/GW/QC/PC/PC_QuadCard_boAt_0.5x._SY116_CB553870684_.jpg" class="w-full h-auto object-cover rounded" alt="boAt">
+              <p class="text-xs mt-1 text-gray-600">Starting ₹249 | boAt</p>
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="hover:opacity-90">
+              <img src="https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/GW/QC/PC/PC_QuadCard_Boult_0.5x._SY116_CB553870684_.jpg" class="w-full h-auto object-cover rounded" alt="Boult">
+              <p class="text-xs mt-1 text-gray-600">Starting ₹349 | boult</p>
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="hover:opacity-90">
+              <img src="https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/GW/QC/PC/PC_QuadCard_Noise_0.5x._SY116_CB553870684_.jpg" class="w-full h-auto object-cover rounded" alt="Noise">
+              <p class="text-xs mt-1 text-gray-600">Starting ₹649 | Noise</p>
+            </a>
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="hover:opacity-90">
+              <img src="https://images-eu.ssl-images-amazon.com/images/G/31/img21/june/CE/MSO/PD3/PC_QuadCard_Zeb_0.5x_1._SY116_CB570220221_.jpg" class="w-full h-auto object-cover rounded" alt="Zebronics">
+              <p class="text-xs mt-1 text-gray-600">Starting ₹149 | Zebronics</p>
+            </a>
+          </div>
+          <div class="p-5 mt-auto">
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="text-sm font-semibold text-blue-600 hover:underline">See all offers</a>
+          </div>
+        </div>
+
+        <!-- Card 4: Single Image Card -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+          <div class="p-5">
+            <h3 class="text-xl font-bold text-gray-800">Up to 50% off | International brands</h3>
+          </div>
+          <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="block hover:opacity-90 flex-grow">
+            <img src="https://images-eu.ssl-images-amazon.com/images/G/31/img19/OOC/Gateway/2025/WK_1/newBAUE/PC_CC_379x304-4._SY304_CB800288272_.jpg" class="w-full h-full object-cover" alt="International brands">
+          </a>
+          <div class="p-5 mt-auto">
+            <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="text-sm font-semibold text-blue-600 hover:underline">See all offers</a>
+          </div>
+        </div>
+
       </div>
+    </div>
+  </div>
 
-      <div class="bg-white shadow-xl rounded-xl p-8 flex flex-col items-center justify-center text-center transition-transform transform hover:scale-105 duration-300 border border-gray-200">
-        <span class="text-5xl mb-4">🛍️</span>
-        <div class="text-xl font-semibold text-gray-700">Shop Products</div>
-        <div class="mt-10"></div>
-        <a
-          href="{% url 'product_list' %}"
-          class="mt-6 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300"
-        >
-          Browse Products
-        </a>
+  <!-- =================================================================== -->
+  <!-- HORIZONTAL SCROLLING PRODUCTS (Visible to All)                      -->
+  <!-- =================================================================== -->
+  <div class="bg-white py-16">
+    <div class="container mx-auto">
+      <div class="flex justify-between items-center mb-6 px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-gray-800">Min. 50% off | Unique home finds</h2>
+        <a href="{% if user.is_authenticated %}{% url 'product_list' %}{% else %}{% url 'login' %}{% endif %}" class="text-blue-600 font-semibold hover:underline whitespace-nowrap">See all</a>
       </div>
       
+      <div class="relative">
+        <div class="flex space-x-4 overflow-x-auto pb-6 -mx-4 px-4 scrollbar-hide">
+          {% for product in top_picks %}
+            <a href="{% url 'product_detail' pk=product.pk %}" class="flex-shrink-0 w-48 block bg-gray-50 rounded-lg group">
+              <div class="p-3">
+                <img class="w-full h-40 object-contain" src="{{ product.image.url }}" alt="{{ product.name }}">
+              </div>
+            </a>
+          {% empty %}
+            <!-- Placeholder products -->
+            <div class="flex-shrink-0 w-48 bg-gray-50 p-3 rounded-lg"><img class="w-full h-40 object-contain" src="https://m.media-amazon.com/images/I/61vihvwHdBL._AC_SY200_.jpg" alt="Crystal Globe Lamp"></div>
+            <div class="flex-shrink-0 w-48 bg-gray-50 p-3 rounded-lg"><img class="w-full h-40 object-contain" src="https://m.media-amazon.com/images/I/51yMoK2YDBL._AC_SY200_.jpg" alt="Tulip LED Night Light"></div>
+            <div class="flex-shrink-0 w-48 bg-gray-50 p-3 rounded-lg"><img class="w-full h-40 object-contain" src="https://m.media-amazon.com/images/I/61Qm+VXoCwL._AC_SY200_.jpg" alt="Clip Reading Lamp"></div>
+            <div class="flex-shrink-0 w-48 bg-gray-50 p-3 rounded-lg"><img class="w-full h-40 object-contain" src="https://m.media-amazon.com/images/I/51Wjei45NzL._AC_SY200_.jpg" alt="Motion Sensor Bulb"></div>
+            <div class="flex-shrink-0 w-48 bg-gray-50 p-3 rounded-lg"><img class="w-full h-40 object-contain" src="https://m.media-amazon.com/images/I/61sEyMFJ1qL._AC_SY200_.jpg" alt="Night Sensor Bulb"></div>
+            <div class="flex-shrink-0 w-48 bg-gray-50 p-3 rounded-lg"><img class="w-full h-40 object-contain" src="https://m.media-amazon.com/images/I/71Fp2VToLXL._AC_SY200_.jpg" alt="Diya String Lights"></div>
+            <div class="flex-shrink-0 w-48 bg-gray-50 p-3 rounded-lg"><img class="w-full h-40 object-contain" src="https://m.media-amazon.com/images/I/71Il+hAxVWL._AC_SY200_.jpg" alt="USB Fairy Light"></div>
+          {% endfor %}
+        </div>
+      </div>
     </div>
-    
-    <div class="mt-12 text-center w-full max-w-5xl">
-      <a 
-        href="{% url 'profile' %}" 
-        class="text-blue-600 hover:text-blue-800 hover:underline text-lg font-medium transition-colors duration-300"
-      >
-        Go to Profile &rarr;
-      </a>
-    </div>
-
-    {% else %}
-    <h2 class="text-5xl md:text-6xl font-extrabold text-center text-gray-800 mb-8 leading-tight">
-      Welcome to the <br class="hidden md:block">
-      <span class="text-blue-600">ShopX</span>
-    </h2>
-    <p class="text-lg text-gray-600 mb-8 text-center max-w-2xl">
-      Discover our curated selection of products. To get started, please log in or create an account.
-    </p>
-
-    <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
-      <a
-        href="{% url 'login' %}"
-        class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300 text-center"
-      >
-        Login
-      </a>
-      <a
-        href="{% url 'register' %}"
-        class="px-8 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300 text-center"
-      >
-        Register
-      </a>
-    </div>
-    {% endif %}
-    
   </div>
+
+  <!-- =================================================================== -->
+  <!-- LOGGED-IN USER DASHBOARD                                            -->
+  <!-- =================================================================== -->
+  {% if user.is_authenticated %}
+  <div class="bg-white py-16">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mx-auto">
+        <!-- Your Orders Card -->
+        <a href="{% url 'order_history' %}" class="group block">
+          <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex items-start space-x-4">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8Cap_pISd3usqDe7LO-gUhqSxmgXfGgnSiA&s" class="w-24 h-24 object-cover rounded-md" alt="Orders">
+            <div>
+              <h3 class="text-2xl font-bold text-gray-800">Your Orders</h3>
+              <p class="text-gray-500 mt-1">Track, return, or buy things again.</p>
+            </div>
+          </div>
+        </a>
+        <!-- Your Cart Card -->
+        <a href="{% url 'cart' %}" class="group block">
+          <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex items-start space-x-4">
+            <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" class="w-24 h-24 object-contain rounded-md" alt="Cart">
+            <div>
+              <h3 class="text-2xl font-bold text-gray-800">Your Cart</h3>
+              <p class="text-gray-500 mt-1">View items and checkout.</p>
+              <p class="text-blue-600 font-bold text-lg mt-2">{{ cart_items|length }} Items</p>
+            </div>
+          </div>
+        </a>
+        <!-- Your Profile Card -->
+        <a href="{% url 'profile' %}" class="group block">
+          <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex items-start space-x-4">
+            <img src="https://cdn-icons-png.freepik.com/512/8188/8188353.png" class="w-24 h-24 object-contain rounded-md" alt="Profile">
+            <div>
+              <h3 class="text-2xl font-bold text-gray-800">Your Profile</h3>
+              <p class="text-gray-500 mt-1">Edit login, name, and address.</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
 </div>
+
+<style>
+  /* Simple utility to hide scrollbar for a cleaner look */
+  .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+  }
+  .scrollbar-hide {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+  }
+</style>
+
 {% endblock %}
