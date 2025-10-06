@@ -1,4 +1,3 @@
-
 from django.urls import path
 from . import views
 
@@ -26,4 +25,10 @@ urlpatterns = [
     path('checkout/', views.checkout_view, name='checkout'),
     path('checkout/review/', views.checkout_review_view, name='checkout_review'),
     path('checkout/success/<int:order_id>/', views.order_success_view, name='order_success'),
+
+    # Static pages
+    path('support/', views.SupportView.as_view(), name='support'),
+    path('contact/', views.ContactUsView.as_view(), name='contact_us'),
+    path('faqs/', views.FAQsView.as_view(), name='faqs'),
+    path('shipping-returns/', views.ShippingReturnsView.as_view(), name='shipping_returns'),
 ]

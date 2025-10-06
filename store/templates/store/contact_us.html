@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+{% block title %}Contact Us{% endblock %}
+{% block content %}
+
+<style>
+  :root{
+    --bg:#f8fafc;
+    --surface:#ffffff;
+    --muted:#f1f5f9;
+    --text:#0f172a;
+    --subtext:#475569;
+    --primary:#2563eb;
+    --primary-50:#eff6ff;
+    --primary-100:#dbeafe;
+    --accent:#10b981;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --border:#e2e8f0;
+    --radius:14px;
+    --radius-sm:10px;
+    --shadow:0 10px 20px rgba(2,6,23,0.05), 0 3px 8px rgba(2,6,23,0.06);
+    --shadow-sm:0 2px 6px rgba(2,6,23,0.06);
+
+    /* Content paddings for different viewports */
+    --pad-xs: clamp(16px, 4vw, 20px);      /* mobile base padding */
+    --pad-sm: 24px;                        /* small tablet */
+    --pad-md: 32px;                        /* tablet */
+    --pad-lg: 48px;                        /* desktop container padding */
+  }
+
+  /* Page-safe padding to avoid touching edges on mobile and respect notches */
+  .page-wrap {
+    padding-left: calc(var(--pad-xs) + env(safe-area-inset-left, 0px));
+    padding-right: calc(var(--pad-xs) + env(safe-area-inset-right, 0px));
+  }
+
+  @media (min-width: 480px){
+    .page-wrap {
+      padding-left: calc(var(--pad-sm) + env(safe-area-inset-left, 0px));
+      padding-right: calc(var(--pad-sm) + env(safe-area-inset-right, 0px));
+    }
+  }
+  @media (min-width: 700px){
+    .page-wrap {
+      padding-left: var(--pad-md);
+      padding-right: var(--pad-md);
+    }
+  }
+  @media (min-width: 1200px){
+    .page-wrap {
+      padding-left: var(--pad-lg);
+      padding-right: var(--pad-lg);
+    }
+  }
+
+  .contact-hero{
+    background: linear-gradient(180deg,var(--primary-50),transparent 70%),
+                radial-gradient(80rem 30rem at 10% -10%, var(--primary-100), transparent 60%);
+    padding:2.5rem 1.25rem;
+    text-align:center;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 2rem auto 1.5rem;
+    max-width: 80rem;
+  }
+  .contact-hero h1{
+    font-size: clamp(1.75rem, 2.5vw, 2.5rem);
+    color: var(--text);
+    margin:0 0 .5rem 0;
+    letter-spacing:-0.02em;
+  }
+  .contact-hero p{
+    color: var(--subtext);
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+
+  .contact-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:1.25rem;
+    margin: 0 auto;
+    max-width: 80rem;
+  }
+  @media(min-width: 900px){
+    .contact-grid{
+      grid-template-columns: 1.2fr .8fr;
+      gap:1.5rem;
+    }
+  }
+
+  .card{
+    background: var(--surface);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding:1.25rem;
+  }
+  .card h2{
+    font-size:1.25rem;
+    margin:0 0 .5rem 0;
+    color: var(--text);
+  }
+  .card p{
+    color: var(--subtext);
+    margin:0 0 .75rem 0;
+  }
+
+  /* Contact methods */
+  .methods{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:.75rem;
+    margin-top: .75rem;
+  }
+  @media(min-width:600px){
+    .methods{ grid-template-columns: repeat(2, 1fr); }
+  }
+  .method{
+    display:flex;
+    gap:.75rem;
+    align-items:flex-start;
+    background: linear-gradient(180deg, var(--primary-50), #fff);
+    border:1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding:.9rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .method .icon{
+    width:38px;height:38px;border-radius:10px;
+    display:grid;place-items:center;
+    background: var(--primary);
+    color:#fff; font-weight:800;
+  }
+  .method strong{ color: var(--text); }
+  .method a{ color: var(--primary); text-decoration: none; }
+  .method a:hover{ text-decoration: underline; }
+
+  /* Form */
+  .form-grid{
+    display:grid; gap:.85rem;
+    grid-template-columns: 1fr;
+  }
+  @media(min-width:700px){
+    .form-grid{ grid-template-columns: 1fr 1fr; }
+    .form-grid .col-span-2{ grid-column: span 2; }
+  }
+  .field{
+    display:flex; flex-direction:column; gap:.4rem;
+  }
+  label{ color: var(--text); font-weight:600; }
+  .hint{ font-size:.85rem; color: var(--subtext); }
+  .input, .textarea, .select{
+    padding:.7rem .85rem; border:1px solid var(--border); border-radius:12px;
+    background: var(--muted); color: var(--text);
+    outline: none; transition: border-color .2s, background .2s, box-shadow .2s;
+    width: 100%;
+  }
+  .input:focus, .textarea:focus, .select:focus{
+    border-color: var(--primary);
+    background: #eef2ff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+  }
+  .textarea{ min-height: 140px; resize: vertical; }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    gap:.5rem; padding:.75rem 1rem; border-radius:12px; border:1px solid transparent;
+    color:#fff; background: linear-gradient(180deg, #60a5fa, var(--primary));
+    font-weight:700; cursor:pointer; transition: transform .04s, filter .2s;
+  }
+  .btn:hover{ filter: brightness(1.03); }
+  .btn:active{ transform: translateY(1px); }
+  .btn.secondary{
+    background: #fff; color: var(--primary); border-color: #bfdbfe;
+  }
+  .required{ color: var(--danger); }
+
+  /* Map and info blocks */
+  .map{
+    border-radius: var(--radius);
+    overflow:hidden; border:1px solid var(--border);
+    height: 280px; background: linear-gradient(180deg, var(--muted), #ffffff);
+    display:grid; place-items:center; color: var(--subtext);
+  }
+  .info-list{
+    display:grid; gap:.5rem; margin-top:.75rem;
+  }
+  .badge{
+    display:inline-block; padding:.25rem .55rem; border-radius: 999px;
+    font-size:.8rem; font-weight:700; background: #ecfdf5; color:#047857; border:1px solid #d1fae5;
+  }
+
+  /* Accordion (FAQ) */
+  details{
+    border:1px solid var(--border); border-radius:12px; padding:.7rem .9rem; background:#fff;
+  }
+  details + details{ margin-top:.5rem; }
+  summary{
+    list-style:none; cursor:pointer; font-weight:700; color:var(--text);
+  }
+  summary::-webkit-details-marker{ display:none; }
+  details[open]{ background: var(--primary-50); }
+
+  /* Avoid horizontal overflow on tiny screens */
+  .contact-grid, .contact-hero { overflow-wrap: anywhere; }
+</style>
+
+<div class="page-wrap">
+  <section class="contact-hero" role="region" aria-labelledby="contact-heading">
+    <h1 id="contact-heading">Contact Us</h1>
+    <p>Questions, feedback, or partnership inquiries—reach out and the team will respond within 24 business hours. For urgent order issues, call the hotline below.</p>
+  </section>
+
+  <div class="contact-grid">
+    <!-- Left: Form and methods -->
+    <div class="card" role="form" aria-labelledby="form-title">
+      <h2 id="form-title">Send a message</h2>
+      <p class="hint">Fill out the form and customer success will follow up by email or phone. Fields marked <span class="required" aria-hidden="true">*</span> are required.</p>
+
+      <form method="post" action="#" novalidate>
+        {% csrf_token %}
+        <div class="form-grid">
+          <div class="field">
+            <label for="name">Full name <span class="required" aria-hidden="true">*</span></label>
+            <input id="name" name="name" type="text" class="input" autocomplete="name" required aria-required="true" />
+            <div class="hint">So the team can address messages properly.</div>
+          </div>
+
+          <div class="field">
+            <label for="email">Email <span class="required" aria-hidden="true">*</span></label>
+            <input id="email" name="email" type="email" class="input" autocomplete="email" required aria-required="true" />
+            <div class="hint">Replies will be sent to this address.</div>
+          </div>
+
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" class="input" autocomplete="tel" placeholder="+1 555 000 1234" />
+            <div class="hint">Optional—used only if phone support is requested.</div>
+          </div>
+
+          <div class="field">
+            <label for="topic">Topic <span class="required" aria-hidden="true">*</span></label>
+            <select id="topic" name="topic" class="select" required aria-required="true">
+              <option value="">Select a topic</option>
+              <option>Order issue</option>
+              <option>Returns & refunds</option>
+              <option>Account & billing</option>
+              <option>Product inquiry</option>
+              <option>Partnerships</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="field col-span-2">
+            <label for="message">Message <span class="required" aria-hidden="true">*</span></label>
+            <textarea id="message" name="message" class="textarea" required aria-required="true" placeholder="Share details to help resolve faster..."></textarea>
+            <div class="hint">Avoid sharing sensitive data. Include order ID if applicable.</div>
+          </div>
+
+          <div class="field col-span-2" aria-live="polite">
+            <button type="submit" class="btn">Send message</button>
+            <button type="reset" class="btn secondary" style="margin-left:.5rem;">Clear</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="methods" aria-labelledby="alt-contact-title">
+        <h2 id="alt-contact-title" class="sr-only">Other contact methods</h2>
+
+        <div class="method" role="group" aria-label="Email Support">
+          <div class="icon" aria-hidden="true">@</div>
+          <div>
+            <strong>Email Support</strong>
+            <p><a href="mailto:support@papazon.com">support@papazon.com</a></p>
+            <span class="hint">Typical reply within 24 hours, Mon–Fri.</span>
+          </div>
+        </div>
+
+        <div class="method" role="group" aria-label="Phone Support">
+          <div class="icon" aria-hidden="true">☎</div>
+          <div>
+            <strong>Phone Support</strong>
+            <p>1-800-123-4567</p>
+            <span class="hint">Mon–Fri, 9am–5pm EST. Urgent issues only.</span>
+          </div>
+        </div>
+
+        <div class="method" role="group" aria-label="Live Chat">
+          <div class="icon" aria-hidden="true">✱</div>
+          <div>
+            <strong>Live Chat</strong>
+            <p><a href="#">Start chat</a></p>
+            <span class="hint">Average wait time under 2 minutes.</span>
+          </div>
+        </div>
+
+        <div class="method" role="group" aria-label="WhatsApp">
+          <div class="icon" aria-hidden="true">✆</div>
+          <div>
+            <strong>WhatsApp</strong>
+            <p><a href="#">Message on WhatsApp</a></p>
+            <span class="hint">Fastest for order status updates.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Help, hours, map, FAQ -->
+    <aside class="card" role="complementary" aria-labelledby="help-title">
+      <h2 id="help-title">Help & hours</h2>
+      <p>Support team is available on business days with priority routing for order issues. Expect a friendly, fast response.</p>
+
+      <div class="info-list">
+        <div><span class="badge">SLA</span> Replies within 24 business hours</div>
+        <div><span class="badge">Priority</span> Orders and returns handled first</div>
+        <div><span class="badge">Timezone</span> EST (UTC−5)</div>
+      </div>
+
+      <h2 style="margin-top:1rem;">Find us</h2>
+      <div class="map" role="img" aria-label="Company location map placeholder">
+        Map placeholder (embed map iframe or static map here)
+      </div>
+
+      <h2 style="margin-top:1rem;">FAQs</h2>
+      <details>
+        <summary>How long do responses take?</summary>
+        <p class="hint">Most messages are answered within 24 business hours. Urgent order issues get priority via phone or chat.</p>
+      </details>
+      <details>
+        <summary>What info should be included?</summary>
+        <p class="hint">Provide the order ID, product name, and a short description of the issue to speed up resolution.</p>
+      </details>
+      <details>
+        <summary>Do you support returns?</summary>
+        <p class="hint">Yes—returns are available within the return window. Include order ID and reason in the message.</p>
+      </details>
+    </aside>
+  </div>
+</div>
+{% endblock %}

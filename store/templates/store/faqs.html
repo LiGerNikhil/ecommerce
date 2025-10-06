@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+
+{% block title %}Frequently Asked Questions{% endblock %}
+
+{% block content %}
+
+<style>
+  :root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --muted: #f1f5f9;
+    --text: #0f172a;
+    --subtext: #475569;
+    --primary: #2563eb;
+    --primary-50: #eff6ff;
+    --primary-100: #dbeafe;
+    --accent: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --border: #e2e8f0;
+
+    --radius: 14px;
+    --radius-sm: 10px;
+    --shadow: 0 10px 20px rgba(2,6,23,.05), 0 3px 8px rgba(2,6,23,.06);
+    --shadow-sm: 0 2px 6px rgba(2,6,23,.06);
+
+    --pad-xs: clamp(16px, 4vw, 20px);
+    --pad-sm: 24px;
+    --pad-md: 32px;
+    --pad-lg: 48px;
+  }
+
+  .page-wrap {
+    padding-left: calc(var(--pad-xs) + env(safe-area-inset-left, 0px));
+    padding-right: calc(var(--pad-xs) + env(safe-area-inset-right, 0px));
+  }
+  @media (min-width:480px){
+    .page-wrap { padding-left: calc(var(--pad-sm) + env(safe-area-inset-left, 0px)); padding-right: calc(var(--pad-sm) + env(safe-area-inset-right, 0px)); }
+  }
+  @media (min-width:700px){
+    .page-wrap { padding-left: var(--pad-md); padding-right: var(--pad-md); }
+  }
+  @media (min-width:1200px){
+    .page-wrap { padding-left: var(--pad-lg); padding-right: var(--pad-lg); }
+  }
+
+  .faq-hero {
+    background: linear-gradient(180deg, var(--primary-50), transparent 70%),
+                radial-gradient(80rem 30rem at 10% -10%, var(--primary-100), transparent 60%);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 2rem auto 1.5rem;
+    padding: 2.25rem 1.25rem;
+    max-width: 80rem;
+    text-align: center;
+  }
+  .faq-hero h1 {
+    font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+    margin: 0 0 .5rem 0;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .faq-hero p {
+    color: var(--subtext);
+    max-width: 46rem;
+    margin: 0 auto;
+  }
+
+  .faq-container {
+    margin: 0 auto 3rem;
+    max-width: 70rem;
+  }
+
+  /* Accordion list */
+  .faq-list {
+    display: grid;
+    gap: .85rem;
+  }
+
+  /* details/summary accordion with animation */
+  details.faq {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: clip;
+    transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+  }
+  details.faq[open] {
+    background: #fff;
+    border-color: #bfdbfe;
+    box-shadow: var(--shadow);
+  }
+
+  /* clickable header */
+  summary.faq-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    cursor: pointer;
+    list-style: none;
+    padding: 1rem 1rem 1rem 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    outline: none;
+  }
+  summary.faq-head::-webkit-details-marker { display: none; }
+
+  /* icon chevron */
+  .chevron {
+    flex: 0 0 auto;
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    display: grid; place-items: center;
+    background: var(--primary-50);
+    color: var(--primary);
+    transition: transform .25s ease, background .2s ease;
+  }
+  details.faq[open] .chevron { transform: rotate(180deg); background: var(--primary-100); }
+
+  /* animated panel */
+  .faq-panel {
+    padding: 0 1.1rem;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .28s ease;
+  }
+  details[open] .faq-panel { grid-template-rows: 1fr; }
+
+  .faq-panel > div {
+    overflow: hidden;
+  }
+
+  .faq-body {
+    padding: 0 0 1rem 0;
+    color: var(--subtext);
+    line-height: 1.6;
+    animation: fadeIn .28s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-2px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .faq-body a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+  .faq-body a:hover { text-decoration: underline; }
+
+  /* Categories/tags row for deep insights */
+  .meta {
+    display: inline-flex;
+    gap: .4rem;
+    flex-wrap: wrap;
+    margin-top: .35rem;
+  }
+  .pill {
+    background: #ecfdf5; color: #047857;
+    border: 1px solid #d1fae5;
+    font-size: .75rem; font-weight: 700;
+    padding: .22rem .5rem; border-radius: 999px;
+  }
+
+  /* Helpful CTA footer */
+  .faq-cta {
+    margin-top: 2rem;
+    background: linear-gradient(180deg, var(--primary-50), #ffffff);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: .5rem; padding: .7rem 1rem;
+    border-radius: 12px; border: 1px solid #bfdbfe;
+    background: linear-gradient(180deg, #60a5fa, var(--primary));
+    color: #fff; font-weight: 800; cursor: pointer;
+    transition: transform .04s ease, filter .2s ease;
+  }
+  .btn:hover { filter: brightness(1.03); }
+  .btn:active { transform: translateY(1px); }
+
+  /* Typography and spacing */
+  .faq-body p { margin: .25rem 0 .5rem; }
+  .faq-body ul { margin: .25rem 0 .75rem; padding-left: 1.2rem; }
+  .faq-body li { margin: .25rem 0; }
+
+  /* Responsive text */
+  .lead { font-size: clamp(.95rem, 1.9vw, 1.05rem); }
+
+  /* Avoid edge touch on very small screens */
+  .faq-container, .faq-hero { overflow-wrap: anywhere; }
+</style>
+
+<div class="page-wrap">
+  <section class="faq-hero" role="region" aria-labelledby="faq-heading">
+    <h1 id="faq-heading">Frequently Asked Questions (FAQs)</h1>
+    <p class="lead">Find quick answers about orders, returns, shipping speed, payments, and more. Expand a topic to see details.</p>
+  </section>
+
+  <div class="faq-container">
+    <div class="faq-list">
+
+      <!-- FAQ: Tracking -->
+      <details class="faq">
+        <summary class="faq-head">
+          <span>How do I track my order?</span>
+          <span class="chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="faq-panel">
+          <div>
+            <div class="faq-body">
+              <p>Track orders anytime in the “Order History” section of the profile. A shipment email with a tracking link is sent once the package leaves the facility.</p>
+              <ul>
+                <li>Tracking updates may take up to 24 hours after dispatch to appear on the carrier site.</li>
+                <li>If the tracking link is missing or broken, copy the tracking ID and check directly on the carrier’s website.</li>
+              </ul>
+              <div class="meta">
+                <span class="pill">Orders</span>
+                <span class="pill">Tracking</span>
+                <span class="pill">Shipping</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- FAQ: Returns -->
+      <details class="faq">
+        <summary class="faq-head">
+          <span>What is your return policy?</span>
+          <span class="chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="faq-panel">
+          <div>
+            <div class="faq-body">
+              <p>Most items are returnable within 30 days of delivery, unused and in original packaging. For full terms, see the Shipping & Returns page.</p>
+              <p>Read more on the <a href="{% url 'shipping_returns' %}">Shipping & Returns</a> page.</p>
+              <ul>
+                <li>Refunds are issued to the original payment method.</li>
+                <li>Some categories may have different windows or restocking fees.</li>
+              </ul>
+              <div class="meta">
+                <span class="pill">Returns</span>
+                <span class="pill">Refunds</span>
+                <span class="pill">Policy</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- FAQ: Shipping speed -->
+      <details class="faq">
+        <summary class="faq-head">
+          <span>How long does shipping take?</span>
+          <span class="chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="faq-panel">
+          <div>
+            <div class="faq-body">
+              <p>Standard shipping typically arrives in 5–7 business days. Expedited options are available at checkout for faster delivery.</p>
+              <p>For region-specific timelines and carriers, see the <a href="{% url 'shipping_returns' %}">Shipping & Returns</a> page.</p>
+              <ul>
+                <li>Peak seasons may add 1–2 business days.</li>
+                <li>Remote areas can require additional transit time.</li>
+              </ul>
+              <div class="meta">
+                <span class="pill">Shipping</span>
+                <span class="pill">Delivery</span>
+                <span class="pill">Logistics</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- FAQ: Payments -->
+      <details class="faq">
+        <summary class="faq-head">
+          <span>What payment methods are accepted?</span>
+          <span class="chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="faq-panel">
+          <div>
+            <div class="faq-body">
+              <p>Major credit/debit cards, UPI, and popular wallets are supported. EMI may be available on eligible cards during checkout.
+                Also we are working on adding cash on delivery as a payment method.
+              </p>
+              <ul>
+                <li>For security, additional verification (3D Secure/OTP) may be required.</li>
+                <li>Prepaid and gift cards support depends on the issuing provider.</li>
+              </ul>
+              <div class="meta">
+                <span class="pill">Payments</span>
+                <span class="pill">UPI</span>
+                <span class="pill">Cards</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- FAQ: Account -->
+      <details class="faq">
+        <summary class="faq-head">
+          <span>I forgot my password. What should I do?</span>
+          <span class="chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="faq-panel">
+          <div>
+            <div class="faq-body">
+              <p>Use the “Forgot Password” link on the sign-in page to receive a reset email. Follow the instructions to set a new password.</p>
+              <ul>
+                <li>Check spam/junk folders if the email doesn’t appear within a few minutes.</li>
+                <li>For locked accounts, try again after 15 minutes or contact support.</li>
+              </ul>
+              <div class="meta">
+                <span class="pill">Account</span>
+                <span class="pill">Security</span>
+                <span class="pill">Access</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block title %}Shipping & Returns{% endblock %}
+{% block content %}
+
+<style>
+  :root{
+    --bg:#f8fafc;
+    --surface:#ffffff;
+    --muted:#f1f5f9;
+    --text:#0f172a;
+    --subtext:#475569;
+    --primary:#2563eb;
+    --primary-50:#eff6ff;
+    --primary-100:#dbeafe;
+    --accent:#10b981;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --border:#e2e8f0;
+
+    --radius:14px;
+    --radius-sm:10px;
+    --shadow:0 10px 20px rgba(2,6,23,.05), 0 3px 8px rgba(2,6,23,.06);
+    --shadow-sm:0 2px 6px rgba(2,6,23,.06);
+
+    --pad-xs: clamp(16px, 4vw, 20px);
+    --pad-sm: 24px;
+    --pad-md: 32px;
+    --pad-lg: 48px;
+  }
+
+  /* Page-safe padding to avoid edge touch on phones and respect notches */
+  .page-wrap {
+    padding-left: calc(var(--pad-xs) + env(safe-area-inset-left, 0px));
+    padding-right: calc(var(--pad-xs) + env(safe-area-inset-right, 0px));
+  }
+  @media (min-width:480px){
+    .page-wrap { padding-left: calc(var(--pad-sm) + env(safe-area-inset-left, 0px)); padding-right: calc(var(--pad-sm) + env(safe-area-inset-right, 0px)); }
+  }
+  @media (min-width:700px){
+    .page-wrap { padding-left: var(--pad-md); padding-right: var(--pad-md); }
+  }
+  @media (min-width:1200px){
+    .page-wrap { padding-left: var(--pad-lg); padding-right: var(--pad-lg); }
+  }
+
+  .hero {
+    background: linear-gradient(180deg, var(--primary-50), transparent 70%),
+                radial-gradient(80rem 30rem at 10% -10%, var(--primary-100), transparent 60%);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 2rem auto 1.5rem;
+    padding: 2.25rem 1.25rem;
+    max-width: 80rem;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    margin: 0 0 .5rem 0;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .hero p {
+    color: var(--subtext);
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+
+  .container {
+    margin: 0 auto 2.5rem;
+    max-width: 70rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.25rem;
+  }
+  .card h2 {
+    font-size: 1.25rem;
+    margin: 0 0 .5rem 0;
+    color: var(--text);
+  }
+  .card p { color: var(--subtext); margin: 0 0 .5rem 0; }
+  .muted { color: var(--subtext); }
+
+  /* Key points list */
+  .list {
+    margin: .25rem 0 .5rem 0;
+    padding-left: 1.1rem;
+    color: var(--subtext);
+  }
+  .list li { margin: .25rem 0; }
+
+  /* Inline badges */
+  .badge {
+    display:inline-block; padding:.2rem .5rem; border-radius:999px;
+    font-size:.75rem; font-weight:700; border:1px solid #d1fae5;
+    background:#ecfdf5; color:#047857;
+  }
+
+  /* Accordion for extra details */
+  details.disclosure {
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:.7rem .9rem;
+    background:#fff;
+    box-shadow: var(--shadow-sm);
+  }
+  details.disclosure + details.disclosure { margin-top:.5rem; }
+  summary.disclosure-head {
+    list-style:none; cursor:pointer; font-weight:700; color:var(--text);
+    display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+  }
+  summary.disclosure-head::-webkit-details-marker { display:none; }
+  details[open] { background: var(--primary-50); border-color:#bfdbfe; }
+
+  .btn {
+    display:inline-flex; align-items:center; justify-content:center;
+    gap:.5rem; padding:.7rem 1rem; border-radius:12px; border:1px solid #bfdbfe;
+    background: linear-gradient(180deg, #60a5fa, var(--primary));
+    color:#fff; font-weight:800; cursor:pointer; transition: transform .04s, filter .2s;
+  }
+  .btn:hover{ filter: brightness(1.03); }
+  .btn:active{ transform: translateY(1px); }
+
+  /* Prevent edge-touch on tiny screens */
+  .hero, .container { overflow-wrap: anywhere; }
+</style>
+
+<div class="page-wrap">
+  <section class="hero" role="region" aria-labelledby="sr-heading">
+    <h1 id="sr-heading">Shipping & Returns</h1>
+    <p>Clear timelines and simple returns—find all shipping speeds, tracking details, and return steps below.</p>
+  </section>
+
+  <div class="container">
+    <!-- Shipping Policy -->
+    <section class="card" aria-labelledby="ship-heading">
+      <h2 id="ship-heading">Shipping Policy</h2>
+      <p class="muted">Orders are processed within 1–2 business days. A tracking email is sent when the parcel ships.</p>
+      <ul class="list">
+        <li><span class="badge">Standard</span> 5–7 business days from dispatch; tracking may update within 24 hours of handoff.</li>
+        <li><span class="badge">Expedited</span> 2–3 business days; carrier availability varies by region.</li>
+        <li><span class="badge">Processing</span> Cutoff is 2 PM local time; weekend orders ship next business day.</li>
+        <li><span class="badge">Coverage</span> Delivery timelines can extend for remote locations or peak season.</li>
+      </ul>
+
+      <details class="disclosure">
+        <summary class="disclosure-head">What if the tracking link doesn’t work?</summary>
+        <div class="muted" style="margin-top:.5rem;">
+          Copy the tracking ID and check directly on the carrier’s site. If no scans appear after 48 hours, contact support for investigation.
+        </div>
+      </details>
+      <details class="disclosure">
+        <summary class="disclosure-head">Do you ship internationally?</summary>
+        <div class="muted" style="margin-top:.5rem;">
+          International shipping may incur customs fees and longer transit times depending on the destination and carrier.
+        </div>
+      </details>
+    </section>
+
+    <!-- Return Policy -->
+    <section class="card" aria-labelledby="return-heading">
+      <h2 id="return-heading">Return Policy</h2>
+      <p class="muted">Returns are accepted within 30 days of delivery for most items, unused and in original packaging.</p>
+      <ul class="list">
+        <li><span class="badge">Eligibility</span> Items must be new, unused, and include all accessories and tags.</li>
+        <li><span class="badge">Condition</span> Certain categories may be non-returnable for hygiene or customization reasons.</li>
+        <li><span class="badge">Refunds</span> Issued to the original payment method after quality check.</li>
+        <li><span class="badge">Exchanges</span> Where available, exchanges can be requested during the return initiation.</li>
+      </ul>
+      <p class="muted" style="margin-top:.5rem;">
+        To initiate a return, please <a href="{% url 'contact_us' %}" class="text-blue-600 hover:underline">contact our support team</a> with the order number.
+      </p>
+
+      <details class="disclosure">
+        <summary class="disclosure-head">How do I start a return?</summary>
+        <div class="muted" style="margin-top:.5rem;">
+          Reach out with the order ID and reason. The team will provide a return label or instructions based on the item and location.
+        </div>
+      </details>
+      <details class="disclosure">
+        <summary class="disclosure-head">Are return shipping fees covered?</summary>
+        <div class="muted" style="margin-top:.5rem;">
+          Depending on the reason and category, return shipping may be deducted from refunds; policy details will be shared during initiation.
+        </div>
+      </details>
+    </section>
+
+    <!-- Helpful guidance -->
+    <section class="card" aria-labelledby="tips-heading">
+      <h2 id="tips-heading">Helpful tips</h2>
+      <ul class="list">
+        <li>Save the original packaging until the order arrives in good condition.</li>
+        <li>Include the order ID in all messages to speed up support.</li>
+        <li>During holidays, allow 1–2 extra business days for carrier scans and delivery.</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+{% endblock %}

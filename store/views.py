@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -6,6 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import UserProfile, Order, OrderItem, Product, Category, Cart, CartItem
 from django import forms
+from django.views.generic import TemplateView
+from django.db.models import Q
+from django.contrib import messages
+from django.core.paginator import Paginator
 
 # Order detail view
 @login_required
@@ -90,11 +93,6 @@ def checkout_review_view(request):
 def order_success_view(request, order_id):
 	order = get_object_or_404(Order, pk=order_id, user=request.user)
 	return render(request, 'store/order_success.html', {'order': order})
-
-from django.db.models import Q
-from django import forms
-from django.contrib import messages
-from django.core.paginator import Paginator
 
 # Cart views
 
@@ -284,3 +282,16 @@ def profile_view(request):
 def order_history_view(request):
 	orders = Order.objects.filter(user=request.user).order_by('-created_at')
 	return render(request, 'store/order_history.html', {'orders': orders})
+
+# Static Pages
+class SupportView(TemplateView):
+    template_name = 'store/support.html'
+
+class ContactUsView(TemplateView):
+    template_name = 'store/contact_us.html'
+
+class FAQsView(TemplateView):
+    template_name = 'store/faqs.html'
+
+class ShippingReturnsView(TemplateView):
+    template_name = 'store/shipping_returns.html'
